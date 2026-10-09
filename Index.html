@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Gambar Lambang Pancasila - Kelas 2 SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Kids Theme */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0fdf4; /* Light green background */
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%2322c55e" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        h1, h2, h3, .title-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        /* Animations */
+        .bounce-in {
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Confetti Effect Container */
+        #confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+            display: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+        /* SVG Image Placeholders styles */
+        .svg-icon {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Screen 1: Start Menu -->
+    <div id="start-screen" class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border-4 border-yellow-400 bounce-in">
+        <div class="flex justify-center mb-6">
+            <i class="fa-solid fa-star text-yellow-400 text-6xl animate-pulse"></i>
+        </div>
+        <h1 class="text-4xl text-red-500 mb-2 title-font tracking-wide">Tebak Gambar</h1>
+        <h2 class="text-2xl text-green-600 mb-6 font-bold">Lambang Pancasila</h2>
+        <p class="text-gray-600 mb-8 text-lg font-semibold">Halo kawan! Yuk, uji pengetahuanmu tentang lambang-lambang Pancasila!</p>
+        
+        <button id="start-btn" class="bg-blue-500 hover:bg-blue-600 text-white title-font text-2xl py-4 px-8 rounded-full shadow-[0_6px_0_#2563eb] hover:shadow-[0_2px_0_#2563eb] hover:translate-y-[4px] transition-all w-full flex items-center justify-center gap-3">
+            <i class="fa-solid fa-play"></i>
+            Mulai Bermain!
+        </button>
+        <p class="mt-6 text-sm text-gray-400 font-bold">Untuk Kelas 2 SD</p>
+    </div>
+
+    <!-- Screen 2: Game Area -->
+    <div id="game-screen" class="bg-white rounded-3xl shadow-2xl p-6 max-w-lg w-full border-4 border-blue-400 hidden">
+        
+        <!-- Header: Score and Question Tracker -->
+        <div class="flex justify-between items-center mb-6 border-b-2 border-gray-100 pb-4">
+            <div class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-trophy"></i>
+                Skor: <span id="score-display">0</span>
+            </div>
+            <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-circle-question"></i>
+                Soal <span id="question-number">1</span>/5
+            </div>
+        </div>
+
+        <!-- Question Text -->
+        <h3 id="question-text" class="text-xl text-center text-gray-700 font-bold mb-4 min-h-[60px] flex items-center justify-center">
+            Petunjuk pertanyaan akan muncul di sini.
+        </h3>
+
+        <!-- Image Container -->
+        <div class="bg-gray-50 rounded-2xl p-6 mb-6 flex justify-center items-center h-48 border-2 border-dashed border-gray-300 relative shadow-inner">
+            <div id="image-container" class="w-32 h-32 flex justify-center items-center">
+                <!-- SVG images will be injected here -->
+            </div>
+            
+            <!-- Feedback Overlay (Correct/Wrong) -->
+            <div id="feedback-overlay" class="absolute inset-0 flex flex-col justify-center items-center bg-white/90 rounded-2xl hidden z-10">
+                <i id="feedback-icon" class="text-6xl mb-2"></i>
+                <h4 id="feedback-text" class="title-font text-2xl"></h4>
+            </div>
+        </div>
+
+        <!-- Options Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="options-container">
+            <button class="option-btn bg-gray-100 hover:bg-blue-50 text-gray-700 font-bold py-4 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all text-lg flex items-center justify-center gap-3 relative overflow-hidden group">
+                <span class="absolute left-0 top-0 bottom-0 bg-gray-200 group-hover:bg-blue-200 w-12 flex items-center justify-center font-bold text-gray-500 group-hover:text-blue-700 rounded-l-lg transition-colors">A</span>
+                <span class="pl-10 option-text">Pilihan 1</span>
+            </button>
+            <button class="option-btn bg-gray-100 hover:bg-blue-50 text-gray-700 font-bold py-4 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all text-lg flex items-center justify-center gap-3 relative overflow-hidden group">
+                <span class="absolute left-0 top-0 bottom-0 bg-gray-200 group-hover:bg-blue-200 w-12 flex items-center justify-center font-bold text-gray-500 group-hover:text-blue-700 rounded-l-lg transition-colors">B</span>
+                <span class="pl-10 option-text">Pilihan 2</span>
+            </button>
+            <button class="option-btn bg-gray-100 hover:bg-blue-50 text-gray-700 font-bold py-4 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all text-lg flex items-center justify-center gap-3 relative overflow-hidden group">
+                <span class="absolute left-0 top-0 bottom-0 bg-gray-200 group-hover:bg-blue-200 w-12 flex items-center justify-center font-bold text-gray-500 group-hover:text-blue-700 rounded-l-lg transition-colors">C</span>
+                <span class="pl-10 option-text">Pilihan 3</span>
+            </button>
+            <button class="option-btn bg-gray-100 hover:bg-blue-50 text-gray-700 font-bold py-4 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all text-lg flex items-center justify-center gap-3 relative overflow-hidden group">
+                <span class="absolute left-0 top-0 bottom-0 bg-gray-200 group-hover:bg-blue-200 w-12 flex items-center justify-center font-bold text-gray-500 group-hover:text-blue-700 rounded-l-lg transition-colors">D</span>
+                <span class="pl-10 option-text">Pilihan 4</span>
+            </button>
+        </div>
+
+        <button id="next-btn" class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl hidden flex justify-center items-center gap-2 shadow-[0_4px_0_#16a34a] hover:shadow-[0_0px_0_#16a34a] hover:translate-y-[4px] transition-all">
+            Lanjut <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Screen 3: Result Screen -->
+    <div id="result-screen" class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border-4 border-green-400 hidden">
+        <div id="result-icon-container" class="flex justify-center mb-6">
+            <i class="fa-solid fa-medal text-yellow-400 text-7xl"></i>
+        </div>
+        <h2 id="result-title" class="text-3xl text-green-600 mb-2 title-font">Hebat Sekali!</h2>
+        <p class="text-gray-600 mb-6 text-lg font-bold">Skor Akhirmu adalah:</p>
+        
+        <div class="text-6xl text-blue-500 font-bold title-font mb-8" id="final-score">
+            100
+        </div>
+        
+        <p id="result-message" class="text-gray-500 mb-8 font-semibold">Kamu sangat pintar mengenal Lambang Pancasila!</p>
+
+        <button id="restart-btn" class="bg-purple-500 hover:bg-purple-600 text-white title-font text-xl py-4 px-8 rounded-full shadow-[0_6px_0_#9333ea] hover:shadow-[0_2px_0_#9333ea] hover:translate-y-[4px] transition-all w-full flex items-center justify-center gap-3">
+            <i class="fa-solid fa-rotate-right"></i>
+            Main Lagi Yuk!
+        </button>
+    </div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container"></div>
+
+    <script>
+        // --- SVG Assets for Pancasila Symbols (Simplified for Kids) ---
+        const svgBintang = `<svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 5 L64 35 L97 38 L72 60 L80 92 L50 74 L20 92 L28 60 L3 38 L36 35 Z" fill="#FBBF24" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/></svg>`;
+        const svgRantai = `<svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#EAB308" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="15"/><circle cx="50" cy="50" r="15"/><circle cx="70" cy="50" r="15"/></g><path d="M 40 40 L 60 40 M 40 60 L 60 60" stroke="#EAB308" stroke-width="8" stroke-linecap="round"/></svg>`;
+        const svgBeringin = `<svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M45 95 L45 60 L55 60 L55 95 Z" fill="#8B4513"/><path d="M50 10 C 20 10, 10 40, 20 65 C 30 65, 30 50, 45 50 C 45 50, 40 70, 50 70 C 60 70, 55 50, 55 50 C 70 50, 70 65, 80 65 C 90 40, 80 10, 50 10 Z" fill="#22C55E" stroke="#16A34A" stroke-width="2"/></svg>`;
+        const svgBanteng = `<svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M30 40 C 30 20, 70 20, 70 40 L 80 80 C 80 90, 20 90, 20 80 Z" fill="#000000"/><path d="M30 40 L 10 20 L 25 50 Z M 70 40 L 90 20 L 75 50 Z" fill="#000000"/><circle cx="40" cy="55" r="5" fill="#EF4444"/><circle cx="60" cy="55" r="5" fill="#EF4444"/><path d="M40 75 Q 50 85 60 75" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/></svg>`;
+        const svgPadiKapas = `<svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g stroke-width="2" stroke-linecap="round"><path d="M40 90 C 20 70, 10 40, 30 10" fill="none" stroke="#8B4513" stroke-width="4"/><path d="M60 90 C 80 70, 90 40, 70 10" fill="none" stroke="#22C55E" stroke-width="4"/><circle cx="25" cy="20" r="6" fill="#FBBF24"/><circle cx="20" cy="40" r="6" fill="#FBBF24"/><circle cx="25" cy="60" r="6" fill="#FBBF24"/><circle cx="75" cy="20" r="6" fill="#FFFFFF" stroke="#D1D5DB"/><circle cx="80" cy="40" r="6" fill="#FFFFFF" stroke="#D1D5DB"/><circle cx="75" cy="60" r="6" fill="#FFFFFF" stroke="#D1D5DB"/></g></svg>`;
+
+        // --- Game Data ---
+        const questions = [
+            {
+                id: 1,
+                svg: svgBintang,
+                question: "Aku adalah lambang sila ke-1, 'Ketuhanan Yang Maha Esa'. Aku bersinar di malam hari. Gambar apakah aku?",
+                options: ["Bintang", "Rantai", "Pohon Beringin", "Kepala Banteng"],
+                correctAnswer: "Bintang"
+            },
+            {
+                id: 2,
+                svg: svgRantai,
+                question: "Aku melambangkan sila ke-2. Aku saling mengait agar kuat. Gambar apakah aku?",
+                options: ["Padi dan Kapas", "Bintang", "Rantai", "Pohon Beringin"],
+                correctAnswer: "Rantai"
+            },
+            {
+                id: 3,
+                svg: svgBeringin,
+                question: "Aku adalah pohon yang besar dan rindang. Aku lambang sila ke-3, 'Persatuan Indonesia'. Siapakah aku?",
+                options: ["Kepala Banteng", "Pohon Beringin", "Rantai", "Padi dan Kapas"],
+                correctAnswer: "Pohon Beringin"
+            },
+            {
+                id: 4,
+                svg: svgBanteng,
+                question: "Aku adalah hewan yang suka berkumpul. Aku lambang sila ke-4. Gambar apakah aku?",
+                options: ["Kepala Banteng", "Bintang", "Pohon Beringin", "Rantai"],
+                correctAnswer: "Kepala Banteng"
+            },
+            {
+                id: 5,
+                svg: svgPadiKapas,
+                question: "Kami melambangkan pangan dan sandang. Kami adalah lambang sila ke-5. Siapakah kami?",
+                options: ["Pohon Beringin", "Rantai", "Kepala Banteng", "Padi dan Kapas"],
+                correctAnswer: "Padi dan Kapas"
+            }
+        ];
+
+        // --- STREAMING_CHUNK:Inisialisasi Variabel State Game ---
+        // --- State Variables ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledQuestions = [];
+        let canAnswer = true;
+        const pointsPerQuestion = 20;
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        const questionText = document.getElementById('question-text');
+        const imageContainer = document.getElementById('image-container');
+        const optionsContainer = document.getElementById('options-container');
+        const optionBtns = document.querySelectorAll('.option-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const questionNumberDisplay = document.getElementById('question-number');
+        
+        const feedbackOverlay = document.getElementById('feedback-overlay');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackText = document.getElementById('feedback-text');
+        
+        const finalScoreDisplay = document.getElementById('final-score');
+        const resultTitle = document.getElementById('result-title');
+        const resultMessage = document.getElementById('result-message');
+        const resultIconContainer = document.getElementById('result-icon-container');
+        const confettiContainer = document.getElementById('confetti-container');
+
+        // --- STREAMING_CHUNK:Fungsi Logika Utama Game ---
+        
+        // Audio setup (using Tone.js synthesis logic conceptually, but simplified with AudioContext for pure JS without external lib if Tone isn't required, but we will use simple synthesized beeps for reliability)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'correct') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+                oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'wrong') {
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'win') {
+                 // Simple arpeggio
+                const times = [0, 0.1, 0.2, 0.3];
+                const freqs = [440, 554, 659, 880]; // A major chord
+                
+                times.forEach((time, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'square';
+                    osc.frequency.value = freqs[index];
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + time);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + time + 0.2);
+                    osc.start(audioCtx.currentTime + time);
+                    osc.stop(audioCtx.currentTime + time + 0.2);
+                });
+            }
+        }
+
+        // --- Game Functions ---
+
+        function initGame() {
+            score = 0;
+            currentQuestionIndex = 0;
+            scoreDisplay.textContent = score;
+            // Shuffle questions
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('bounce-in');
+            
+            // Remove bounce-in after it finishes so it can be re-applied later if needed
+            setTimeout(() => gameScreen.classList.remove('bounce-in'), 800);
+            
+            loadQuestion();
+        }
+
+        // --- STREAMING_CHUNK:Memuat Pertanyaan dan Pilihan ---
+        function loadQuestion() {
+            canAnswer = true;
+            nextBtn.classList.add('hidden');
+            feedbackOverlay.classList.add('hidden');
+            
+            const currentQ = shuffledQuestions[currentQuestionIndex];
+            
+            // Update Header
+            questionNumberDisplay.textContent = currentQuestionIndex + 1;
+            
+            // Update Content
+            questionText.textContent = currentQ.question;
+            imageContainer.innerHTML = currentQ.svg;
+            
+            // Randomize options for this specific question
+            const shuffledOptions = [...currentQ.options].sort(() => Math.random() - 0.5);
+            
+            // Update Buttons
+            optionBtns.forEach((btn, index) => {
+                const textSpan = btn.querySelector('.option-text');
+                textSpan.textContent = shuffledOptions[index];
+                
+                // Reset styling
+                btn.className = 'option-btn bg-gray-100 hover:bg-blue-50 text-gray-700 font-bold py-4 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-all text-lg flex items-center justify-center gap-3 relative overflow-hidden group';
+                btn.disabled = false;
+                
+                // Add letter styling back
+                const letters = ['A', 'B', 'C', 'D'];
+                const letterSpan = btn.querySelector('span:first-child');
+                letterSpan.className = 'absolute left-0 top-0 bottom-0 bg-gray-200 group-hover:bg-blue-200 w-12 flex items-center justify-center font-bold text-gray-500 group-hover:text-blue-700 rounded-l-lg transition-colors';
+                letterSpan.textContent = letters[index];
+            });
+        }
+
+        // --- STREAMING_CHUNK:Logika Cek Jawaban ---
+        function checkAnswer(selectedBtn) {
+            if (!canAnswer) return;
+            canAnswer = false;
+            
+            const selectedText = selectedBtn.querySelector('.option-text').textContent;
+            const currentQ = shuffledQuestions[currentQuestionIndex];
+            const isCorrect = selectedText === currentQ.correctAnswer;
+            
+            // Show Feedback Overlay
+            feedbackOverlay.classList.remove('hidden');
+            
+            if (isCorrect) {
+                playSound('correct');
+                score += pointsPerQuestion;
+                scoreDisplay.textContent = score;
+                
+                // Style correct button
+                selectedBtn.classList.remove('bg-gray-100', 'border-gray-200', 'hover:bg-blue-50');
+                selectedBtn.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                
+                // Overlay content
+                feedbackOverlay.className = 'absolute inset-0 flex flex-col justify-center items-center bg-green-50/90 rounded-2xl z-10';
+                feedbackIcon.className = 'fa-solid fa-face-smile text-6xl mb-2 text-green-500 bounce-in';
+                feedbackText.textContent = "Benar!";
+                feedbackText.className = 'title-font text-3xl text-green-600';
+
+                // Confetti mini burst
+                createConfetti(20);
+                
+            } else {
+                playSound('wrong');
+                gameScreen.classList.add('shake');
+                setTimeout(() => gameScreen.classList.remove('shake'), 500);
+                
+                // Style wrong button
+                selectedBtn.classList.remove('bg-gray-100', 'border-gray-200', 'hover:bg-blue-50');
+                selectedBtn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
+                
+                // Overlay content
+                feedbackOverlay.className = 'absolute inset-0 flex flex-col justify-center items-center bg-red-50/90 rounded-2xl z-10';
+                feedbackIcon.className = 'fa-solid fa-face-frown text-6xl mb-2 text-red-500 bounce-in';
+                feedbackText.textContent = "Kurang Tepat!";
+                feedbackText.className = 'title-font text-3xl text-red-600';
+                
+                // Highlight correct answer
+                optionBtns.forEach(btn => {
+                    if (btn.querySelector('.option-text').textContent === currentQ.correctAnswer) {
+                        btn.classList.add('ring-4', 'ring-green-400', 'ring-opacity-50');
+                    }
+                });
+            }
+            
+            // Disable all buttons
+            optionBtns.forEach(btn => btn.disabled = true);
+            
+            // Show next button
+            setTimeout(() => {
+                 nextBtn.classList.remove('hidden');
+            }, 500);
+        }
+
+        // --- STREAMING_CHUNK:Logika Pindah Soal dan Hasil Akhir ---
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            gameScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            resultScreen.classList.add('bounce-in');
+            
+            finalScoreDisplay.textContent = score;
+            
+            let message = "";
+            let iconHtml = "";
+            
+            if (score === 100) {
+                message = "Sempurna! Kamu sangat hafal Pancasila!";
+                iconHtml = '<i class="fa-solid fa-crown text-yellow-400 text-7xl bounce-in"></i>';
+                playSound('win');
+                createConfetti(100); // Big celebration
+            } else if (score >= 60) {
+                message = "Bagus! Terus belajar agar lebih hebat!";
+                iconHtml = '<i class="fa-solid fa-thumbs-up text-blue-500 text-7xl bounce-in"></i>';
+                playSound('correct');
+            } else {
+                message = "Tetap semangat! Ayo coba lagi!";
+                iconHtml = '<i class="fa-solid fa-star text-gray-400 text-7xl bounce-in"></i>';
+            }
+            
+            resultMessage.textContent = message;
+            resultIconContainer.innerHTML = iconHtml;
+        }
+
+        // --- STREAMING_CHUNK:Efek Visual (Confetti) ---
+        function createConfetti(amount) {
+            confettiContainer.style.display = 'block';
+            confettiContainer.innerHTML = '';
+            const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
+            
+            for (let i = 0; i < amount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Randomize properties
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Randomize shape (some circles, some squares)
+                if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
+                
+                const duration = Math.random() * 2 + 1; // 1-3 seconds
+                confetti.style.animationDuration = duration + 's';
+                
+                // Start slightly above screen
+                confetti.style.top = '-10px';
+                
+                confettiContainer.appendChild(confetti);
+            }
+            
+            // Clean up
+            setTimeout(() => {
+                confettiContainer.style.display = 'none';
+                confettiContainer.innerHTML = '';
+            }, 3000);
+        }
+
+        // --- STREAMING_CHUNK:Event Listeners ---
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            // Need user interaction to start AudioContext reliably
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            initGame();
+        });
+        
+        optionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                checkAnswer(this);
+            });
+        });
+        
+        nextBtn.addEventListener('click', nextQuestion);
+        
+        restartBtn.addEventListener('click', initGame);
+
+    </script>
+</body>
+</html>
